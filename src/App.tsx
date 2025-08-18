@@ -1,16 +1,18 @@
-import { SyntheticEvent, useRef, useState } from 'react';
+import { SyntheticEvent, useEffect, useRef, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { List } from './list.type.ts';
 import { toast, Toaster } from 'sonner';
 import { twMerge } from 'tailwind-merge';
+import { useLocalStorage } from './use-local-storage.ts';
 
 const App = () => {
   const [value, setValue] = useState<string>('');
-  const [list, setList] = useState<List[]>([]);
+  const [list, setList] = useLocalStorage<List[]>('list', []);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const handleInput = (value: string) => {
     setValue(value);
   };
+
   const handleSubmit = (event: SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (value.trim() === '') {
@@ -45,7 +47,6 @@ const App = () => {
     <div className={'bg-zinc-100 min-h-screen flex items-start justify-center py-8'}>
       <div className={'w-5xl bg-zinc-200 rounded-lg p-4 flex  flex-wrap gap-2 flex-col'}>
         <h1 className={'text-center text-5xl font-bold text-zinc-700'}>TODO LIST</h1>
-        <p>Szymon Niewiadomski 122861</p>
         <form className={'flex flex-wrap gap-2 w-full'} onSubmit={handleSubmit}>
           <input
             placeholder={'Task...'}
