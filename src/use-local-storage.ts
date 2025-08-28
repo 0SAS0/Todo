@@ -1,15 +1,15 @@
 import { Dispatch, SetStateAction, useCallback, useEffect, useState } from 'react';
 type SetValue<T> = Dispatch<SetStateAction<T>>;
-export const useLocalStorage = <T>(key: string, defaultValue: unknown) => {
+export const useLocalStorage = <T>(key: string, defaultValue: T) => {
   const [state, setState] = useState<T>(() => {
     const item = localStorage.getItem(key)
     if (item != null) {
-      return(JSON.parse(item));
+      return(JSON.parse(item) as T);
     }else{
       return defaultValue;
     }
   });
-  const updateState:SetValue<T> = (value: unknown) => {
+  const updateState:SetValue<T> = (value) => {
     const newValue = value instanceof Function ? value(state) : value;
     localStorage.setItem(key, JSON.stringify(newValue));
     setState(newValue);
@@ -30,5 +30,5 @@ export const useLocalStorage = <T>(key: string, defaultValue: unknown) => {
     };
   },[getValue]);
 
-  return [state, updateState];
+  return [state, updateState] as const;
 };

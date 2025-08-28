@@ -1,4 +1,4 @@
-import { SyntheticEvent, useEffect, useRef, useState } from 'react';
+import { SyntheticEvent, useRef, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { List } from './list.type.ts';
 import { toast, Toaster } from 'sonner';
@@ -25,6 +25,7 @@ const App = () => {
         uuid: uuidv4(),
         value: value,
         isDone: false,
+        isEdit: false,
       },
     ]);
     setValue('');
@@ -43,6 +44,25 @@ const App = () => {
   const handleDelete = (uuid: string) => {
     setList((prevState) => prevState.filter((item) => item.uuid !== uuid));
   };
+  const toggleEdit = (uuid: string) => {
+    setList((prevState) =>
+    prevState.map((item) => {
+      if (item.uuid === uuid){
+        return {...item, isEdit: true};
+      }
+      return item;
+    }))
+  }
+  const saveEdit = (uuid: string, newValue: string) => {
+    setList((prevState) =>
+      prevState.map((item) => {
+        if (item.uuid === uuid) {
+          return {...item, isEdit: false, value: newValue};
+        }
+        return item;
+      })
+    )
+  }
   return (
     <div className={'bg-zinc-100 min-h-screen flex items-start justify-center py-8'}>
       <div className={'w-5xl bg-zinc-200 rounded-lg p-4 flex  flex-wrap gap-2 flex-col'}>
@@ -71,22 +91,47 @@ const App = () => {
               }
               key={item.uuid}
             >
-              <input
-                className={twMerge(
-                  'size-9 bg-zinc-200',
-                  item.isDone ? 'appearance-auto' : 'appearance-none',
-                )}
-                checked={item.isDone}
-                type={'checkbox'}
-                onChange={() => handleCheck(item.uuid)}
-              />
-              <span className={'break-all'}>{item.value}</span>
-              <button
-                className={'rounded bg-red-500 h-9 px-6 text-white font-bold hover:bg-red-700'}
-                onClick={() => handleDelete(item.uuid)}
-              >
-                Delete
-              </button>
+              {item.isEdit ? (
+                <><input
+                  className={'bg-zinc-100 rounded-md outline-none focus:ring-2 focus:ring-zinc-700 py-1.5 px-2.5 flex-1'}
+                  value={item.value}
+                  onChange={(e) => saveEdit(item.uuid, e.target.value)}
+                  />
+                  <button
+                    className={'rounded-md bg-green-500 py-1.5 px-6 text-white font-bold hover:bg-green-600'}
+                    onClick={()=>saveEdit(item.uuid, item.value)}
+                  >
+                  Save
+                  </button>
+                </>
+              ) : (
+                <>
+                  <input
+                    className={twMerge(
+                      'size-9 bg-zinc-200',
+                      item.isDone ? 'appearance-auto' : 'appearance-none',
+                    )}
+                    checked={item.isDone}
+                    type={'checkbox'}
+                    onChange={() => handleCheck(item.uuid)}
+                  />
+                  <span className={'break-all'}>{item.value}</span>
+                  <button
+                    className={'rounded bg-red-500 h-9 px-6 text-white font-bold hover:bg-red-700'}
+                    onClick={() => handleDelete(item.uuid)}
+                  >
+                    Delete
+                  </button>
+                  <button
+                    className={
+                      'rounded-md bg-gray-500 py-1.5 px-6 text-white font-bold hover:bg-gray-600'
+                    }
+                    onClick={() => toggleEdit(item.uuid)}
+                  >
+                    Edit
+                  </button>
+                </>
+              )}
             </li>
           ))}
         </ul>
