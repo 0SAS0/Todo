@@ -26,6 +26,7 @@ const App = () => {
         value: value,
         isDone: false,
         isEdit: false,
+        editValue: value || '',
       },
     ]);
     setValue('');
@@ -48,16 +49,26 @@ const App = () => {
     setList((prevState) =>
     prevState.map((item) => {
       if (item.uuid === uuid){
-        return {...item, isEdit: true};
+        return {...item, isEdit: true, editValue: item.value};
       }
       return item;
     }))
+  }
+  const handleEdit = (uuid: string, newValue: string) => {
+    setList((prevState) =>
+      prevState.map((item) => {
+        if (item.uuid === uuid){
+          return {...item, editValue: newValue};
+        }
+        return item;
+      })
+    )
   }
   const saveEdit = (uuid: string, newValue: string) => {
     setList((prevState) =>
       prevState.map((item) => {
         if (item.uuid === uuid) {
-          return {...item, isEdit: false, value: newValue};
+          return {...item, isEdit: false, value: item.editValue || newValue};
         }
         return item;
       })
@@ -94,8 +105,8 @@ const App = () => {
               {item.isEdit ? (
                 <><input
                   className={'bg-zinc-100 rounded-md outline-none focus:ring-2 focus:ring-zinc-700 py-1.5 px-2.5 flex-1'}
-                  value={item.value}
-                  onChange={(e) => saveEdit(item.uuid, e.target.value)}
+                  value={item.editValue ?? ''}
+                  onChange={(e) => handleEdit(item.uuid, e.target.value)}
                   />
                   <button
                     className={'rounded-md bg-green-500 py-1.5 px-6 text-white font-bold hover:bg-green-600'}

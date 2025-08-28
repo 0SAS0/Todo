@@ -3,4 +3,5 @@ export type List = {
   value: string;
   isDone: boolean;
   isEdit: boolean;
+  editValue: string;
 };
