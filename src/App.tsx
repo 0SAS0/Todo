@@ -98,12 +98,14 @@ const App = () => {
           {list.map((item) => (
             <li
               className={
-                'gap-1.5 grid grid-cols-[auto_1fr_auto] items-center bg-zinc-100 px-2 py-3 rounded-md'
+                'gap-1.5 grid grid-cols-[auto_1fr_auto_auto] items-center bg-zinc-100 px-2 py-3 rounded-md'
               }
               key={item.uuid}
             >
               {item.isEdit ? (
-                <><input
+                <><div></div>
+                  <div className={'flex gap-2 w-full'}>
+                  <input
                   className={'bg-zinc-100 rounded-md outline-none focus:ring-2 focus:ring-zinc-700 py-1.5 px-2.5 flex-1'}
                   value={item.editValue ?? ''}
                   onChange={(e) => handleEdit(item.uuid, e.target.value)}
@@ -114,13 +116,14 @@ const App = () => {
                   >
                   Save
                   </button>
+                  </div>
                 </>
               ) : (
                 <>
                   <input
                     className={twMerge(
-                      'size-9 bg-zinc-200',
-                      item.isDone ? 'appearance-auto' : 'appearance-none',
+                      'size-9 bg-zinc-200 ',
+                      item.isDone ? 'appearance-auto' : 'appearance-none' ,
                     )}
                     checked={item.isDone}
                     type={'checkbox'}
